@@ -25,13 +25,12 @@ func TestVersionNegotitation(t *testing.T) {
 			t.Run(testCase.name, func(t *testing.T) {
 				buffer := make([]byte, len(testCase.bytes))
 
-				vnp := packet.VersionNegotiation(buffer[:])
+				vnp := packet.VersionNegotiation(buffer)
 				vnp.SetConnectionID(testCase.connectionID)
 				vnp.SetVersions(testCase.versions)
 
-				l := vnp.Len()
-				assert.Equal(t, len(testCase.bytes), l)
-				assert.Equal(t, testCase.bytes, buffer[:l])
+				assert.Equal(t, len(testCase.bytes), vnp.Len())
+				assert.Equal(t, testCase.bytes, buffer)
 			})
 		}
 	})
