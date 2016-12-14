@@ -46,7 +46,7 @@ func TestHeader(t *testing.T) {
 					header.SetVersion(testCase.version.(uint32))
 				}
 				if testCase.packetNumber != nil {
-					header.SetPacketNumber(testCase.packetNumber)
+					header.SetPacketNumber(testCase.packetNumber, testCase.special)
 				}
 				l := header.Len(testCase.special)
 
@@ -65,7 +65,7 @@ func TestHeader(t *testing.T) {
 					assert.Equal(t, testCase.version, header.Version())
 				}
 				if testCase.packetNumber != nil {
-					assert.Equal(t, testCase.packetNumber, header.PacketNumber())
+					assert.Equal(t, testCase.packetNumber, header.PacketNumber(testCase.special))
 				}
 			})
 		}
