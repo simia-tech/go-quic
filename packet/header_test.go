@@ -10,48 +10,32 @@ import (
 func TestHeader(t *testing.T) {
 	testCases := []struct {
 		name         string
-		special      bool
 		flags        uint8
 		connectionID interface{}
-		version      interface{}
-		packetNumber interface{}
 
 		bytes []byte
 	}{
-		{"VersionClient", false, 0, uint64(1), uint32(2), uint64(3),
-			[]byte{0x3d, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00}},
-		{"VersionServer", true, 0, uint64(1), nil, nil,
-			[]byte{0x0c, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}},
-		{"PublicReset", true, packet.PublicResetFlag, uint64(1), nil, nil,
-			[]byte{0x0e, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}},
-		{"Regular8", false, 0, uint64(1), nil, uint64(2),
-			[]byte{0x3c, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00}},
-		{"Regular4", false, 0, uint32(1), nil, uint32(2),
-			[]byte{0x28, 0x01, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00}},
-		{"Regular2", false, 0, uint32(1), nil, uint16(2),
-			[]byte{0x18, 0x01, 0x00, 0x00, 0x00, 0x02, 0x00}},
-		{"Regular1", false, 0, uint8(1), nil, uint8(2),
-			[]byte{0x04, 0x01, 0x02}},
+		{"Regular", packet.ConnectionID, uint64(1),
+			[]byte{0x08, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}},
+		{"Version", packet.VersionFlag | packet.ConnectionID, uint64(1),
+			[]byte{0x09, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}},
+		{"PublicReset", packet.PublicResetFlag | packet.ConnectionID, uint64(1),
+			[]byte{0x0a, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}},
 	}
 
 	t.Run("Write", func(t *testing.T) {
 		for _, testCase := range testCases {
 			t.Run(testCase.name, func(t *testing.T) {
-				buffer := [packet.MaxHeaderSize]byte{}
+				buffer := make([]byte, len(testCase.bytes))
 
-				header := packet.Header(buffer[:len(testCase.bytes)])
+				header := packet.Header(buffer)
 				header.SetFlags(testCase.flags)
-				header.SetConnectionID(testCase.connectionID)
-				if testCase.version != nil {
-					header.SetVersion(testCase.version.(uint32))
+				if testCase.connectionID != nil {
+					header.AddConnectionID(testCase.connectionID.(uint64))
 				}
-				if testCase.packetNumber != nil {
-					header.SetPacketNumber(testCase.packetNumber, testCase.special)
-				}
-				l := header.Len(testCase.special)
 
-				assert.Equal(t, len(testCase.bytes), l)
-				assert.Equal(t, testCase.bytes, buffer[:l])
+				assert.Equal(t, len(testCase.bytes), header.Len())
+				assert.Equal(t, testCase.bytes, buffer)
 			})
 		}
 	})
@@ -60,12 +44,9 @@ func TestHeader(t *testing.T) {
 		for _, testCase := range testCases {
 			t.Run(testCase.name, func(t *testing.T) {
 				header := packet.Header(testCase.bytes)
-				assert.Equal(t, testCase.connectionID, header.ConnectionID())
-				if testCase.version != nil {
-					assert.Equal(t, testCase.version, header.Version())
-				}
-				if testCase.packetNumber != nil {
-					assert.Equal(t, testCase.packetNumber, header.PacketNumber(testCase.special))
+				assert.Equal(t, testCase.flags, header.Flags())
+				if testCase.connectionID != nil {
+					assert.Equal(t, testCase.connectionID, header.ConnectionID())
 				}
 			})
 		}

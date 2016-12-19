@@ -5,21 +5,25 @@ import (
 	"fmt"
 )
 
+// VersionNegotiation defines the version negotiation packet type.
 type VersionNegotiation []byte
 
+// SetConnectionID sets the connection id.
 func (vn VersionNegotiation) SetConnectionID(value uint64) {
 	header := Header(vn)
 	header.SetFlags(VersionFlag)
-	header.SetConnectionID(value)
+	header.AddConnectionID(value)
 }
 
+// ConnectionID returns the connection id.
 func (vn VersionNegotiation) ConnectionID() uint64 {
-	return Header(vn).ConnectionID().(uint64)
+	return Header(vn).ConnectionID()
 }
 
+// SetVersions sets the versions.
 func (vn VersionNegotiation) SetVersions(values []uint32) {
 	header := Header(vn)
-	offset := header.Len(true)
+	offset := header.Len()
 	vn.ensureLen(offset + (len(values) * 4))
 
 	for _, value := range values {
@@ -28,9 +32,10 @@ func (vn VersionNegotiation) SetVersions(values []uint32) {
 	}
 }
 
+// Versions returns the versions.
 func (vn VersionNegotiation) Versions() []uint32 {
 	header := Header(vn)
-	offset := header.Len(true)
+	offset := header.Len()
 	count := (len(vn) - offset) / 4
 	versions := make([]uint32, count)
 	for index := 0; index < count; index++ {
@@ -40,6 +45,7 @@ func (vn VersionNegotiation) Versions() []uint32 {
 	return versions
 }
 
+// Len returns the length of the packet including the header.
 func (vn VersionNegotiation) Len() int {
 	return len(vn)
 }
