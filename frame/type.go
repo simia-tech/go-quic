@@ -17,7 +17,7 @@ const (
 
 	// Flags for the stream type.
 	FlagFinish       = 0x40
-	FlagDataLength   = 0x20
+	FlagDataLen      = 0x20
 	FlagOffsetLen8   = 0x07 << 2
 	FlagOffsetLen7   = 0x06 << 2
 	FlagOffsetLen6   = 0x05 << 2

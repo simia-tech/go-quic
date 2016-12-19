@@ -8,7 +8,7 @@ import (
 	"github.com/simia-tech/go-quic/frame"
 )
 
-func TestHeader(t *testing.T) {
+func TestType(t *testing.T) {
 	testCases := []struct {
 		name string
 
@@ -17,7 +17,7 @@ func TestHeader(t *testing.T) {
 
 		bytes []byte
 	}{
-		{"StreamCreate", frame.TypeStream, frame.FlagDataLength | frame.FlagOffsetLen8 | frame.FlagStreamIDLen4,
+		{"StreamCreate", frame.TypeStream, frame.FlagDataLen | frame.FlagOffsetLen8 | frame.FlagStreamIDLen4,
 			[]byte{0xbf}},
 		{"StreamDelete", frame.TypeStream, frame.FlagFinish,
 			[]byte{0xc0}},
