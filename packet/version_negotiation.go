@@ -11,7 +11,7 @@ type VersionNegotiation []byte
 // SetConnectionID sets the connection id.
 func (vn VersionNegotiation) SetConnectionID(value uint64) {
 	header := Header(vn)
-	header.SetFlags(VersionFlag)
+	header.SetFlags(FlagVersion)
 	header.AddConnectionID(value)
 }
 

@@ -6,7 +6,7 @@ type PublicReset []byte
 // SetConnectionID sets the connection id.
 func (pr PublicReset) SetConnectionID(value uint64) {
 	header := Header(pr)
-	header.SetFlags(PublicResetFlag)
+	header.SetFlags(FlagPublicReset)
 	header.AddConnectionID(value)
 }
 

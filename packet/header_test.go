@@ -15,11 +15,11 @@ func TestHeader(t *testing.T) {
 
 		bytes []byte
 	}{
-		{"Regular", packet.ConnectionID, uint64(1),
+		{"Regular", packet.FlagConnectionID, uint64(1),
 			[]byte{0x08, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}},
-		{"Version", packet.VersionFlag | packet.ConnectionID, uint64(1),
+		{"Version", packet.FlagVersion | packet.FlagConnectionID, uint64(1),
 			[]byte{0x09, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}},
-		{"PublicReset", packet.PublicResetFlag | packet.ConnectionID, uint64(1),
+		{"PublicReset", packet.FlagPublicReset | packet.FlagConnectionID, uint64(1),
 			[]byte{0x0a, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}},
 	}
 

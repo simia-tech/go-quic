@@ -7,11 +7,11 @@ import (
 
 // Header flags
 const (
-	FlagMask        = 0x03
-	VersionFlag     = 0x01
-	PublicResetFlag = 0x02
-	Nonce           = 0x04
-	ConnectionID    = 0x08
+	FlagMask         = 0x03
+	FlagVersion      = 0x01
+	FlagPublicReset  = 0x02
+	FlagNonce        = 0x04
+	FlagConnectionID = 0x08
 
 	PacketNumberMask = 0x30
 	PacketNumberLen6 = 0x30
@@ -41,13 +41,13 @@ func (h Header) Flags() uint8 {
 // uint8, uint16, uint32 or uint64. Values of other types will cause a panic.
 func (h Header) AddConnectionID(value uint64) {
 	h.ensureLen(9)
-	h.SetFlags(ConnectionID)
+	h.SetFlags(FlagConnectionID)
 	binary.LittleEndian.PutUint64(h[1:], value)
 }
 
 // ConnectionID returns the connection id.
 func (h Header) ConnectionID() uint64 {
-	if h[0]&ConnectionID == 0x00 {
+	if h[0]&FlagConnectionID == 0x00 {
 		return 0
 	}
 	h.ensureLen(9)
@@ -66,7 +66,7 @@ func (h Header) ensureLen(l int) {
 }
 
 func (h Header) connectionIDLen() int {
-	if h[0]&ConnectionID == 0x00 {
+	if h[0]&FlagConnectionID == 0x00 {
 		return 0
 	}
 	return 8

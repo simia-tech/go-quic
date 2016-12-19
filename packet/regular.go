@@ -23,7 +23,7 @@ func (r Regular) AddVersion(version uint32) {
 	header := Header(r)
 	offset := header.Len()
 	r.ensureLen(offset + 4)
-	header.SetFlags(VersionFlag)
+	header.SetFlags(FlagVersion)
 	binary.LittleEndian.PutUint32(r[offset:], version)
 }
 
@@ -112,7 +112,7 @@ func (r Regular) ensureLen(l int) {
 }
 
 func (r Regular) versionLen() int {
-	if Header(r).Flags()&VersionFlag == 0x00 {
+	if Header(r).Flags()&FlagVersion == 0x00 {
 		return 0
 	}
 	return 4
